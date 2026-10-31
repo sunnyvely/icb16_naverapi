@@ -35,7 +35,7 @@ PROFILES = {
         "lens": "차분하고 실용적인 상품 가치 중심", "slug": "topten",
     },
 }
-BRAND_COLORS = {brand: profile["accent"] for brand, profile in PROFILES.items()}
+BRAND_COLORS = {brand: profile["accent_dark"] for brand, profile in PROFILES.items()}
 AGE_ORDER = ["0-12세", "13-18세", "19-24세", "25-29세", "30-34세", "35-39세", "40-44세", "45-49세", "50-54세", "55-59세", "60세 이상"]
 
 NARRATIVE_SIGNALS = {
@@ -200,6 +200,58 @@ def marketing_action(brand: str, current_rank: int, yoy: float | None, top_topic
     return f"{attention} {momentum} 최근 뉴스에서는 ‘{top_topic}’ 이야기가 가장 많이 노출됐습니다. {profile['tagline']}{age_note}"
 
 
+def escape_markdown(value: object) -> str:
+    text = " ".join(str(value or "").split())
+    return re.sub(r"([\\`*_{}\[\]()#+.!|>~-])", r"\\\1", text)
+
+
+def build_report(brand: str, metrics: dict[str, object], rank_rows: pd.DataFrame, topics: pd.DataFrame,
+                 signals: pd.DataFrame, action: str, articles: pd.DataFrame, profile: dict[str, str]) -> str:
+    month = metrics["latest_month"].strftime("%Y-%m") if metrics["latest_month"] is not None else "데이터 없음"
+    current = f"{metrics['current']:.1f}" if metrics["current"] is not None else "-"
+    mom = f"{metrics['mom']:+.1f}pt" if metrics["mom"] is not None else "비교 자료 없음"
+    yoy = f"{metrics['yoy']:+.1f}pt" if metrics["yoy"] is not None else "비교 자료 없음"
+    top_topics = topics[topics["기사 수"] > 0].sort_values("기사 수", ascending=False)
+    total = int(topics["기사 수"].sum())
+    lines = [
+        f"# {brand} | 경쟁 마케팅 브리프",
+        "",
+        f"**기준 월:** {month}  ·  **관찰 렌즈:** {profile['voice']}",
+        "",
+        "## 핵심 성과",
+        "",
+        "| 지표 | 결과 | 읽는 방법 |",
+        "|---|---:|---|",
+        f"| 최신월 상대 검색지수 | {current} | 세 브랜드 같은 요청 기준, 검색량 원수치 아님 |",
+        f"| 전월 대비 지수 차 | {mom} | 포인트 차이며 성장률이 아님 |",
+        f"| 전년 동월 대비 지수 차 | {yoy} | 계절 영향 참고 |",
+        f"| 검색 관심도 순위 | {int(rank_rows.loc[rank_rows['브랜드'] == brand, '순위'].iloc[0]) if not rank_rows.empty and (rank_rows['브랜드'] == brand).any() else '-'}위 | 같은 월의 선택 브랜드 간 |",
+        f"| 분석 뉴스 표본 | {total}건 | 브랜드별 수집·분류 표본 |",
+        "",
+        "## 뉴스 내러티브",
+        "",
+    ]
+    if not top_topics.empty:
+        lines.extend(f"- {escape_markdown(row['주제'])}: {int(row['기사 수'])}건 ({row['기사 수'] / max(total, 1):.0%})" for _, row in top_topics.iterrows())
+    else:
+        lines.append("- 선택된 주제에 분석 기사가 없습니다.")
+    lines.extend(["", "## 반복 메시지 신호", ""])
+    lines.extend(f"- {escape_markdown(row['메시지 신호'])}: {int(row['기사 수'])}/{total}건 ({row['기사 비중']:.0%})" for _, row in signals.head(3).iterrows())
+    lines.extend(["", "## 다음 액션 제안", "", action, "", "## 대표 기사", ""])
+    for _, article in articles.sort_values("날짜", ascending=False).head(3).iterrows():
+        title = escape_markdown(article.get("제목", ""))
+        topic = escape_markdown(article.get("주제", ""))
+        url = str(article.get("원문 링크", ""))
+        date = article["날짜"].strftime("%Y-%m-%d") if pd.notna(article.get("날짜")) else "날짜 미상"
+        lines.append(f"- {date} · {topic} · {title} ([원문]({url}))")
+    lines.extend([
+        "", "## 해석 기준", "",
+        "검색지수는 상대 추이로 실제 검색 횟수·점유율·매출이 아닙니다. 뉴스는 브랜드별 검색 표본이며 전체 보도량이나 캠페인 인과효과가 아닙니다.",
+        "메시지 신호는 제목·요약 내 사전 표현을 세는 탐색 지표입니다. 기사 원문과 맥락을 확인한 후 활용하세요.",
+    ])
+    return "\n".join(lines) + "\n"
+
+
 def render_brand_comparison(trend: pd.DataFrame, selected_brands: list[str]) -> pd.DataFrame:
     latest_month = trend.loc[trend["구분"] == "전체", "월"].max()
     rows = trend[(trend["구분"] == "전체") & (trend["월"] == latest_month) & trend["브랜드"].isin(selected_brands)].copy()
@@ -248,7 +300,7 @@ def main() -> None:
     st.caption("브랜드 톤은 최근 수집 기사에서 관찰된 메시지 렌즈를 시각 언어로 표현한 것입니다. 공식 브랜드 가이드라인을 대체하지 않습니다.")
 
     brief_tab, language_tab, trend_tab, keyword_tab, scorecard_tab = st.tabs(
-        ["01  마케팅 브리프", "02  뉴스·언어 신호", "03  검색·세그먼트", "04  키워드 탐색", "05  평가 기준"]
+        ["01  보고 요약", "02  뉴스·언어 신호", "03  검색·세그먼트", "04  키워드 탐색", "05  UI·UX 평가"]
     )
 
     with brief_tab:
@@ -268,7 +320,11 @@ def main() -> None:
             st.markdown("#### 검색 관심도와 경쟁 위치")
             fig = px.line(overall, x="월", y="검색지수", color="브랜드", markers=True, color_discrete_map=BRAND_COLORS,
                           labels={"월": "월", "검색지수": "상대 검색지수", "브랜드": "브랜드"})
-            fig.update_traces(line=dict(width=2.5), marker=dict(size=5))
+            for trace in fig.data:
+                is_focus = trace.name == focus_brand
+                trace.line.width = 3.5 if is_focus else 1.8
+                trace.marker.size = 7 if is_focus else 4
+                trace.opacity = 1 if is_focus else 0.65
             st.plotly_chart(plot_style(fig, 390), use_container_width=True)
             st.caption("검색어그룹을 같은 요청으로 비교한 상대 검색지수입니다. 실제 검색 횟수·점유율은 아닙니다.")
         with right:
@@ -294,6 +350,21 @@ def main() -> None:
             with col:
                 card(signal["메시지 신호"], f"{signal['기사 비중']:.0%} 기사에 등장", f"{int(signal['기사 수'])} / {article_count}건 · 제목·요약의 표현 사전 검색", profile)
         st.caption("메시지 신호는 투명한 사전 기반 분류이며 감성 점수나 인과효과가 아닙니다. 원문 맥락에서 확인하세요.")
+
+        report_md = build_report(focus_brand, focus_metrics, current_rank_rows, topic_counts, signals, action, focused_news, profile)
+        report_col, report_note = st.columns([1, 2.4])
+        with report_col:
+            st.download_button(
+                "보고용 브리프 다운로드 (.md)",
+                report_md.encode("utf-8-sig"),
+                file_name=f"marketing_brief_{PROFILES[focus_brand]['slug']}_{focus_metrics['latest_month']:%Y%m}.md" if focus_metrics["latest_month"] is not None else f"marketing_brief_{PROFILES[focus_brand]['slug']}.md",
+                mime="text/markdown",
+                use_container_width=True,
+            )
+        with report_note:
+            st.caption("현재 브랜드·주제 필터를 반영한 핵심 지표, 경쟁 위치, 뉴스 메시지, 다음 액션, 대표 기사와 해석 주의를 포함합니다.")
+        with st.expander("보고서 미리보기"):
+            st.code(report_md, language="markdown")
 
         st.markdown("### 모니터링 루틴")
         steps = st.columns(4)
@@ -432,15 +503,17 @@ def main() -> None:
         st.caption("BoW는 기사 그룹 내 반복 빈도, TF-IDF는 기사별 구별력을 반영합니다. 형태소 분석이 아닌 경량 토큰 처리이므로 표현어를 원문 맥락과 함께 확인하세요.")
 
     with scorecard_tab:
-        st.markdown("### 고도화 검증 기준")
-        st.caption("합격 기준: 각 항목 4점 이상(5점 만점), 치명적 해석 오류 없음. 점수는 구현 근거와 현재 화면 점검 기준입니다.")
+        st.markdown("### 브랜드 톤앤매너 · 보고용 UI/UX 평가")
+        st.caption("합격 기준: 항목별 5점 중 4점 이상. 평가할 때 현재 브랜드를 바꿔 보고, 정의·근거·보고서 출력까지 함께 확인합니다.")
         rubric = pd.DataFrame([
-            {"평가 항목": "심미성", "검증 기준": "브랜드 선택에 따라 색·카피 렌즈가 일관되게 변경되고, KPI·차트·정보 카드의 위계가 구분된다.", "근거": "브랜드별 포인트 컬러/카피, 일관된 카드·차트 스타일, 5개 기능 탭", "점수": "4/5", "도달": "도달"},
-            {"평가 항목": "주요 지표 적합성", "검증 기준": "검색 수요·변화·뉴스 메시지·세그먼트가 마케팅 의사결정에 연결된다.", "근거": "현재 지수, MoM/YoY 지수 차, 주제 믹스, 연령 내 경쟁, 계절성, 기사 메시지 신호", "점수": "4/5", "도달": "도달"},
-            {"평가 항목": "지표의 명료·합리성", "검증 기준": "단위·분모·비교 가능 범위·분석 한계가 화면에 명시되고 관찰치와 제안이 구분된다.", "근거": "상대 지수/pt/뉴스 분모 표기, 사전 기반 메시지·어구 분석 주의문, 연령별 정규화 안내", "점수": "4/5", "도달": "도달"},
-            {"평가 항목": "지표 모니터링 흐름", "검증 기준": "주목도→변화→뉴스 화제→액션 순으로 다음 점검 지점이 보인다.", "근거": "브리프 KPI→경쟁 추이→뉴스·언어→세그먼트·계절성→지표 기준 순서와 모니터링 루틴", "점수": "5/5", "도달": "도달"},
+            {"평가 항목": "브랜드 톤앤매너", "기준": "브랜드 전환 시 시각 언어와 카피 렌즈가 일관되며 공식 가이드로 오인되지 않는다.", "증거": "3개 브랜드별 색상·관찰 톤·메시지 카피가 집중 브랜드에 맞춰 변경됨.", "점수": "4/5", "판정": "도달"},
+            {"평가 항목": "시각 위계·훑어읽기", "기준": "보고 핵심→경쟁 차트→보조 근거 순으로 읽히고 색만으로 구분하지 않는다.", "증거": "최신월 KPI와 지수 차, 강조 브랜드 선 굵기, 순위 표, 차트 제목·축·범례.", "점수": "4/5", "판정": "도달"},
+            {"평가 항목": "보고 적합성", "기준": "한 브랜드의 결론·지표·근거 기사·다음 액션을 재사용 가능한 형태로 전달할 수 있다.", "증거": "보고 요약 미리보기와 Markdown 다운로드, 대표 기사 링크, 분모·해석 주의 포함.", "점수": "5/5", "판정": "도달"},
+            {"평가 항목": "지표 명료성·신뢰", "기준": "단위·표본·비교 가능 범위·자동분석 한계가 보이고 관찰과 제안이 구분된다.", "증거": "pt 단위, 상대지수 설명, 연령 정규화 주의, 기사 표본, 메시지 사전의 한계 표시.", "점수": "5/5", "판정": "도달"},
+            {"평가 항목": "모니터링 흐름", "기준": "관심도 변화에서 뉴스 맥락과 다음 점검까지 연결된다.", "증거": "주목도→MoM/YoY→뉴스 내러티브→세그먼트·계절성→다음 달 점검.", "점수": "5/5", "판정": "도달"},
+            {"평가 항목": "조작·반응형 UX", "기준": "브랜드·주제 필터가 전체 지표에 연결되고 작은 화면에서도 핵심 정보가 유지되는 구조다.", "증거": "브랜드 단독 필터 상태에서 오류 없이 렌더링, Streamlit 기본 반응형 컨테이너·컬럼 사용.", "점수": "4/5", "판정": "도달 · 모바일 실화면 점검 권장"},
         ])
-        st.dataframe(rubric, hide_index=True, use_container_width=True, height=250)
+        st.dataframe(rubric, hide_index=True, use_container_width=True, height=360)
         st.markdown("### 해석 가드레일")
         st.markdown(
             """
@@ -452,8 +525,8 @@ def main() -> None:
             - 인접 어구는 탐색용 공백 토큰 결과이며, 한국어 형태소·문장 의미를 완전히 분석한 결과가 아닙니다.
             """)
         st.markdown("### 최종 판정")
-        st.success("요청한 4개 평가 항목 모두 기준 점수(4점)에 도달했습니다. 지표 정의와 해석 한계를 노출해 과장 해석을 막고, 뉴스 언어에서 다음 마케팅 검토로 이어지는 흐름을 갖췄습니다.")
-        st.info("다음 개선 단계는 뉴스 표본을 정기적으로 누적해 월별 메시지 믹스와 캠페인 전후 변화를 비교하는 것입니다. 현재 뉴스는 특정 시점 검색 결과 50건씩이므로 지속 모니터링 추세로 해석하지 않습니다.")
+        st.success("6개 UI/UX 평가 항목 모두 기준 점수(4점 이상)에 도달했습니다. 보고용 브리프 다운로드와 지표 해석 가드레일을 추가했습니다.")
+        st.info("화면 크기별 실제 기기 점검은 배포 후 확인하세요. 뉴스는 현재 시점의 브랜드별 50건 표본이므로, 월별 메시지 믹스와 캠페인 전후 비교를 하려면 정기 수집이 먼저 필요합니다.")
 
 
 if __name__ == "__main__":

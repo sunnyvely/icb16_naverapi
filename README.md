@@ -30,12 +30,13 @@ Community Cloud에서 **Create app**을 선택해 위 저장소·브랜치·진�
 
 - `app.py`: 뉴스, 주제 분류, 키워드, 워드 클라우드, 검색 추이 대시보드
 - 브랜드 렌즈: 경쟁 브랜드마다 색상·카피를 전환하며 최신 검색지수, MoM/YoY 지수 차, 뉴스 메시지 신호를 연결
+- 보고 요약: 경쟁 순위·주제 믹스·다음 액션·근거 기사 링크를 Markdown 브리프로 미리 보기/다운로드
 - `analysis/`: 검색 추이 수집·분석과 재실행 스크립트
 - `data/raw/`: 수정하지 않은 NAVER API 응답
 - `data/processed/`: 정리된 뉴스, 분류, 키워드 및 검색 추이 데이터
 - `outputs/figures/`: 워드 클라우드 및 검색 추이 차트
 - `CLAUDE.md`: 데이터 저장과 인증 정보 취급 규칙
-- `data/processed/dashboard_marketing_upgrade_evaluation_20261031.md`: 대시보드 고도화 평가 기준과 결과
+- `data/processed/dashboard_marketing_upgrade_evaluation_20261031.md`: 브랜드 톤앤매너 및 보고용 UI/UX 평가 기준과 결과
 - `requirements.txt`: Streamlit 배포 런타임 의존성
 - `requirements-analysis.txt`: 데이터 수집·분석 스크립트 추가 의존성
 
