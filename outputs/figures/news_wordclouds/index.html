@@ -1,0 +1,133 @@
+<!doctype html><html lang='ko'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<title>브랜드별 BoW / TF-IDF 워드 클라우드</title>
+<style>body{font-family:'Malgun Gothic',sans-serif;background:#f1f5f9;color:#0f172a;margin:0;padding:32px}h1{margin-bottom:8px}p{color:#475569}.group{background:white;border-radius:14px;padding:22px;margin:24px 0;box-shadow:0 4px 18px #0f172a12}.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}.pair img{width:100%;height:auto;border:1px solid #e2e8f0;border-radius:8px}.label{font-weight:700;margin:6px 0}.meta{font-size:14px;color:#475569}@media(max-width:900px){.pair{grid-template-columns:1fr}}</style>
+</head><body><h1>브랜드·주제별 키워드 워드 클라우드</h1>
+<p>왼쪽은 BoW 출현 횟수, 오른쪽은 TF-IDF 평균 가중치입니다. 그룹 안에서 각각 비교하세요.</p>
+<section class='group'>
+<h2>유니클로 · 제품 출시</h2>
+<p class='meta'>기사 8건 · 상위 10개 공통 키워드 3개 (30%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='uniqlo_product_launch_bow.png' alt='유니클로 제품 출시 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='uniqlo_product_launch_tfidf.png' alt='유니클로 제품 출시 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 경량패딩, 가격, 값싼, 개발, 경쟁, 경험, 넘어, 니트, 다이소, 데이터<br><b>TF-IDF:</b> 경량패딩, 옛말, 가격, 부모, 패딩, 히트텍, 값싼, 보고, 운영하, 세탁</p>
+</section>
+<section class='group'>
+<h2>유니클로 · 협업</h2>
+<p class='meta'>기사 7건 · 상위 10개 공통 키워드 6개 (60%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='uniqlo_collaboration_bow.png' alt='유니클로 협업 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='uniqlo_collaboration_tfidf.png' alt='유니클로 협업 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 협업, 벨리곰, 아이앱, e스포츠, 게임, 글로벌, 디자이너, 디자인, 디즈니, 부문<br><b>TF-IDF:</b> 협업, 아이앱, 벨리곰, 디즈니, 디자이너, 컬렉션, 디자인, 서비스, 커스터마이징, 캐릭터</p>
+</section>
+<section class='group'>
+<h2>유니클로 · 할인 혹은 행사</h2>
+<p class='meta'>기사 8건 · 상위 10개 공통 키워드 8개 (80%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='uniqlo_discount_event_bow.png' alt='유니클로 할인 혹은 행사 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='uniqlo_discount_event_tfidf.png' alt='유니클로 할인 혹은 행사 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 콘텐츠, 가격, 글로벌, 매장, 참가자들, k패션, 개점, 광주, 국내, 디자인<br><b>TF-IDF:</b> 콘텐츠, 글로벌, 가격, 참가자들, 매장, 개점, 광주, 디자인, 마케팅, 비중</p>
+</section>
+<section class='group'>
+<h2>유니클로 · 실적 또는 사업</h2>
+<p class='meta'>기사 22건 · 상위 10개 공통 키워드 8개 (80%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='uniqlo_performance_business_bow.png' alt='유니클로 실적 또는 사업 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='uniqlo_performance_business_tfidf.png' alt='유니클로 실적 또는 사업 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 매장, 대표, 대형, 롯데백화점, 명동, 점포, 가격, 매출, 스탠다드, 시장<br><b>TF-IDF:</b> 매장, 대표, 롯데백화점, 대형, 명동, 연속, 매출, 점포, 의류, 스탠다드</p>
+</section>
+<section class='group'>
+<h2>유니클로 · 기타</h2>
+<p class='meta'>기사 5건 · 상위 10개 공통 키워드 9개 (90%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='uniqlo_other_bow.png' alt='유니클로 기타 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='uniqlo_other_tfidf.png' alt='유니클로 기타 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 스카프, 글로벌, 롯데, 마케팅, 목도리, 문화, 박성태, 방식, 정사각형, 각각<br><b>TF-IDF:</b> 마케팅, 스카프, 글로벌, 롯데, 목도리, 방식, 정사각형, 문화, 박성태, 거래액</p>
+</section>
+<section class='group'>
+<h2>스파오 · 제품 출시</h2>
+<p class='meta'>기사 22건 · 상위 10개 공통 키워드 9개 (90%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='spao_product_launch_bow.png' alt='스파오 제품 출시 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='spao_product_launch_tfidf.png' alt='스파오 제품 출시 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 경량패딩, 이랜드월드, 패딩, 씬라이트, 인기, 후드, 가격, 운영하, 재킷, 치이카<br><b>TF-IDF:</b> 경량패딩, 이랜드월드, 패딩, 씬라이트, 인기, 후드, 운영하, 가격, 등골, 재킷</p>
+</section>
+<section class='group'>
+<h2>스파오 · 협업</h2>
+<p class='meta'>기사 8건 · 상위 10개 공통 키워드 9개 (90%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='spao_collaboration_bow.png' alt='스파오 협업 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='spao_collaboration_tfidf.png' alt='스파오 협업 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 캐릭터, 협업, 인기, 먼작귀, 이랜드월드, 팝업, 가나디, 문화, 산리오, 파자마<br><b>TF-IDF:</b> 캐릭터, 협업, 인기, 팝업, 먼작귀, 파자마, 이랜드월드, 가나디, 산리오, 포켓몬</p>
+</section>
+<section class='group'>
+<h2>스파오 · 실적 또는 사업</h2>
+<p class='meta'>기사 12건 · 상위 10개 공통 키워드 7개 (70%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='spao_performance_business_bow.png' alt='스파오 실적 또는 사업 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='spao_performance_business_tfidf.png' alt='스파오 실적 또는 사업 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 매장, 상권, 경쟁, 규모, 뉴발란스, 대구, 대형, 동성로점, 매출, 미쏘<br><b>TF-IDF:</b> 상권, 매장, 경쟁, 매출, 스탠다드, 에잇세컨즈, 현장, 규모, 미쏘, 대형</p>
+</section>
+<section class='group'>
+<h2>스파오 · 기타</h2>
+<p class='meta'>기사 8건 · 상위 10개 공통 키워드 10개 (100%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='spao_other_bow.png' alt='스파오 기타 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='spao_other_tfidf.png' alt='스파오 기타 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 야장, 가벼운, 기능, 라이트, 발수, 생활, 야외, 윈드브레이커, 지퍼, 투웨<br><b>TF-IDF:</b> 야장, 가벼운, 야외, 기능, 라이트, 발수, 생활, 윈드브레이커, 지퍼, 투웨</p>
+</section>
+<section class='group'>
+<h2>탑텐 · 제품 출시</h2>
+<p class='meta'>기사 11건 · 상위 10개 공통 키워드 10개 (100%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='topten_product_launch_bow.png' alt='탑텐 제품 출시 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='topten_product_launch_tfidf.png' alt='탑텐 제품 출시 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 경량패딩, 패딩, 슬기, 에어테크, 가격, 경쟁, 씬라이트, 운영하, 키즈, 파카<br><b>TF-IDF:</b> 경량패딩, 패딩, 에어테크, 키즈, 운영하, 씬라이트, 가격, 슬기, 경쟁, 파카</p>
+</section>
+<section class='group'>
+<h2>탑텐 · 협업</h2>
+<p class='meta'>기사 1건 · 상위 10개 공통 키워드 10개 (100%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='topten_collaboration_bow.png' alt='탑텐 협업 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='topten_collaboration_tfidf.png' alt='탑텐 협업 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 니트, 다이소, 가격, 고물가, 공략, 느끼, 뭐길래, 부담, 소비자들, 앞세워<br><b>TF-IDF:</b> 니트, 다이소, 가격, 고물가, 공략, 느끼, 뭐길래, 부담, 소비자들, 앞세워</p>
+</section>
+<section class='group'>
+<h2>탑텐 · 할인 혹은 행사</h2>
+<p class='meta'>기사 6건 · 상위 10개 공통 키워드 10개 (100%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='topten_discount_event_bow.png' alt='탑텐 할인 혹은 행사 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='topten_discount_event_tfidf.png' alt='탑텐 할인 혹은 행사 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 최대, 패딩, 경량, 겨울, 가족, 니트, 의류, 플리스, 할인, 할인한다<br><b>TF-IDF:</b> 패딩, 최대, 경량, 겨울, 의류, 가족, 할인한다, 니트, 플리스, 할인</p>
+</section>
+<section class='group'>
+<h2>탑텐 · 실적 또는 사업</h2>
+<p class='meta'>기사 23건 · 상위 10개 공통 키워드 10개 (100%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='topten_performance_business_bow.png' alt='탑텐 실적 또는 사업 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='topten_performance_business_tfidf.png' alt='탑텐 실적 또는 사업 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 계약서, 매장, 모두싸인, 원본, 계약, 시간, 특정, 부서별, 운영하, 캐비닛<br><b>TF-IDF:</b> 계약서, 모두싸인, 매장, 계약, 원본, 특정, 시간, 캐비닛, 부서별, 운영하</p>
+</section>
+<section class='group'>
+<h2>탑텐 · 기타</h2>
+<p class='meta'>기사 9건 · 상위 10개 공통 키워드 9개 (90%)</p>
+<div class='pair'>
+<div><div class='label'>BoW</div><img src='topten_other_bow.png' alt='탑텐 기타 BoW word cloud'></div>
+<div><div class='label'>TF-IDF</div><img src='topten_other_tfidf.png' alt='탑텐 기타 TF-IDF word cloud'></div>
+</div>
+<p class='meta'><b>BoW:</b> 다이소, 빕스, 가족, 규모, 대구, 롯데몰, 쇼핑몰, 염태순, 오픈, 청량리<br><b>TF-IDF:</b> 빕스, 다이소, 청량리, 오픈, 롯데몰, 규모, 가족, 쇼핑몰, 염태순, 프랑스</p>
+</section>
+</body></html>
